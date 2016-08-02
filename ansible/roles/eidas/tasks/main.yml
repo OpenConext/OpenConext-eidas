@@ -1,0 +1,4 @@
+---
+
+- name: Install application
+  debug: msg=TODO

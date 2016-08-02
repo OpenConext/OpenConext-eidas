@@ -1,0 +1,55 @@
+---
+- name: install httpd and required modules
+  yum: name={{ item }} state=present
+  with_items:
+     - httpd
+     - mod_ssl
+  tags: httpd
+
+- name: create dest dir for ssl keys and certs
+  file: name=/etc/httpd/keys state=directory mode=650 owner=root group=root
+  tags: httpd
+
+- name: put the certificate for ssl
+  copy: content="{{ eidas_ssl_cert }}" dest=/etc/httpd/keys/{{ eidas_vhost_name }}.pem mode=0400 owner=root
+
+- name: copy the non-hanging systemd file
+  copy: src=httpd.service dest=/usr/lib/systemd/system mode=0644 owner=root
+
+- name: Put the private key for ssl
+  copy: content="{{ eidas_ssl_key | vault(vault_keydir) }}" dest=/etc/httpd/keys/{{ eidas_vhost_name }}.key owner=root group=root mode=0400
+
+- name: copy default config files
+  copy: src={{ item }} dest=/etc/httpd/conf.d/{{ item }}
+  tags: httpd
+  with_items:
+    - 01_default.conf
+  notify: restart httpd
+
+- name: copy the config file
+  copy: src={{ item }} dest=/etc/httpd/conf/{{ item }}
+  tags: httpd
+  with_items:
+    - httpd.conf
+  notify: restart httpd
+
+- name: remove default conf files apache
+  file: path=/etc/httpd/conf.d/{{ item }} state=absent
+  with_items:
+    - cruncher.conf
+    - welcome.conf
+
+- name: remove default /var/www folders
+  file: path=/var/www/{{ item }} state=absent
+  with_items:
+    - cgi-bin
+    - error
+    - html
+    - icons
+
+- name: enable httpd
+  service: name={{ item }} enabled=yes
+  with_items:
+       - httpd
+  notify:
+    - restart httpd

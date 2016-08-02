@@ -1,0 +1,9 @@
+---
+- hosts: eidas
+  become: true
+  gather_facts: yes
+  roles:
+    - { role: initial, tags: initial }
+    - { role: httpd, tags: httpd }
+    - { role: java, tags: java }
+    - { role: eidas, tags: eidas }

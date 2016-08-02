@@ -1,0 +1,10 @@
+---
+eidas_vhost_name: eidas.example.com
+smtp_server: localhost
+error_mail_to: logs@example.org
+email_noreply: noreply@example.com
+
+# Certificate and private key for HTTPS for eidas_vhost_name
+# Format: X.509 PEM certificate, PEM private key
+eidas_ssl_cert: "{{ lookup('file', inventory_dir+'/ssl_cert/eidas.crt') }}"
+eidas_ssl_key: "{{ lookup('file', inventory_dir+'/ssl_cert/eidas.key') }}"
