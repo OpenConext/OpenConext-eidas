@@ -1,6 +1,6 @@
 # OpenConext-eidas
 
-OpenConext-eidas is a SAML Proxy acting as a Identity Provider in the OpenConext SAML Federation and as a 
+OpenConext-eidas is a SAML Proxy acting as a Identity Provider in the OpenConext SAML Federation and as a
 ServiceProvider for eIDAS
 
 ## [Getting started](#getting-started)
@@ -24,11 +24,11 @@ To prepare for a deploy you must first create a new "environment" and customise 
    - ansible. Use e.g. `pip install ansible`
    - python-keyczar. Use e.g. `pip install python-keyczar`
 
-2. Create a new environment:  
-  `cd ansible`  
-  `./scripts/create_new_environment.sh <environment dir>`  
-  
+2. Create a new environment:
+  `cd ansible`
+  `./scripts/create_new_environment.sh <environment dir>`
+
 3. Update the inventory and groups_vars in the generated environment to match your setup
 
-4. Deploy using ansible:  
-   `ansible-playbook eidas.yml -i <environment dir>/inventory`     
+4. Deploy using ansible:
+   `ansible-playbook eidas.yml -i <environment dir>/inventory`
