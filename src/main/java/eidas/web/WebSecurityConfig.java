@@ -77,22 +77,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   private String identityProviderMetadataUrl;
 
   @Value("${proxy.base_url}")
-  private String idensysBaseUrl;
+  private String eidasBaseUrl;
 
   @Value("${proxy.entity_id}")
-  private String idensysEntityId;
+  private String eidasEntityId;
 
   @Value("${proxy.private_key}")
-  private String idensysPrivateKey;
+  private String eidasPrivateKey;
 
   @Value("${proxy.certificate}")
-  private String idensysCertificate;
+  private String eidasCertificate;
 
   @Value("${proxy.passphrase}")
-  private String idensysPassphrase;
+  private String eidasPassphrase;
 
   @Value("${proxy.acs_location}")
-  private String idensysACSLocation;
+  private String eidasACSLocation;
 
   @Value("${serviceproviders.feed}")
   private String serviceProvidersFeedUrl;
@@ -219,7 +219,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     ExtendedMetadata extendedMetadata = new ExtendedMetadata();
     extendedMetadata.setIdpDiscoveryEnabled(false);
     extendedMetadata.setSignMetadata(true);
-    extendedMetadata.setTlsKey(idensysEntityId);
+    extendedMetadata.setTlsKey(eidasEntityId);
     extendedMetadata.setSigningAlgorithm(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256);
     return extendedMetadata;
   }
@@ -263,7 +263,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Bean
   public SAMLContextProviderImpl contextProvider() throws URISyntaxException {
-    return new ProxiedSAMLContextProviderLB(new URI(idensysBaseUrl));
+    return new ProxiedSAMLContextProviderLB(new URI(eidasBaseUrl));
   }
 
   @Bean
@@ -284,22 +284,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   @Bean
   public KeyManager keyManager() throws InvalidKeySpecException, CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, XMLStreamException {
     KeyStoreLocator keyStoreLocator = new KeyStoreLocator();
-    KeyStore keyStore = keyStoreLocator.createKeyStore(idensysPassphrase);
+    KeyStore keyStore = keyStoreLocator.createKeyStore(eidasPassphrase);
 
-    keyStoreLocator.addPrivateKey(keyStore, idensysEntityId, idensysPrivateKey, idensysCertificate, idensysPassphrase);
+    keyStoreLocator.addPrivateKey(keyStore, eidasEntityId, eidasPrivateKey, eidasCertificate, eidasPassphrase);
 
     this.serviceProviders = getServiceProviders();
     serviceProviders.entrySet().forEach(sp -> {
       try {
         ServiceProvider serviceProvider = sp.getValue();
-        if (serviceProvider.isSigningCertificateSigned() && !serviceProvider.getEntityId().equals(idensysEntityId)) {
+        if (serviceProvider.isSigningCertificateSigned() && !serviceProvider.getEntityId().equals(eidasEntityId)) {
           keyStoreLocator.addCertificate(keyStore, sp.getKey(), serviceProvider.getSigningCertificate());
         }
       } catch (CertificateException | KeyStoreException e) {
         throw new RuntimeException(e);
       }
     });
-    return new KeyNamedJKSKeyManager(keyStore, Collections.singletonMap(idensysEntityId, idensysPassphrase), idensysEntityId, proxyKeyName);
+    return new KeyNamedJKSKeyManager(keyStore, Collections.singletonMap(eidasEntityId, eidasPassphrase), eidasEntityId, proxyKeyName);
   }
 
   private Map<String, ServiceProvider> getServiceProviders() throws IOException, XMLStreamException {
@@ -308,7 +308,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
       this.serviceProviders = new ServiceProviderFeedParser(defaultResourceLoader.getResource(serviceProvidersFeedUrl)).parse();
     }
     if (environment.acceptsProfiles("dev")) {
-      this.serviceProviders.put(idensysEntityId, new ServiceProvider(idensysEntityId, idensysCertificate, singletonList(idensysACSLocation)));
+      this.serviceProviders.put(eidasEntityId, new ServiceProvider(eidasEntityId, eidasCertificate, singletonList(eidasACSLocation)));
     }
     return this.serviceProviders;
   }
@@ -316,13 +316,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   @Bean
   public SAMLMessageHandler samlMessageHandler() throws NoSuchAlgorithmException, CertificateException, InvalidKeySpecException, KeyStoreException, IOException, XMLStreamException {
     HTTPRedirectDeflateDecoder samlMessageDecoder = new HTTPRedirectDeflateDecoder(parserPool());
-    samlMessageDecoder.setURIComparator(new ProxyURIComparator(this.idensysBaseUrl, "http://localhost:" + this.serverPort));
+    samlMessageDecoder.setURIComparator(new ProxyURIComparator(this.eidasBaseUrl, "http://localhost:" + this.serverPort));
     return new SAMLMessageHandler(
       keyManager(),
       samlMessageDecoder,
       new HTTPPostSimpleSignEncoder(velocityEngine(), "/templates/saml2-post-simplesign-binding.vm", true),
       securityPolicyResolver(),
-      idensysEntityId);
+      eidasEntityId);
   }
 
   private SecurityPolicyResolver securityPolicyResolver() {

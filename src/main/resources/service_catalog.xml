@@ -22,14 +22,14 @@
   </ds:Signature>
   <esc:ServiceProvider esc:IsPublic="true">
     <esc:ServiceProviderID>87157352092511980227</esc:ServiceProviderID>
-    <esc:OrganizationDisplayName xml:lang="nl">SURFconext Idensys PoC</esc:OrganizationDisplayName>
-    <esc:OrganizationDisplayName xml:lang="en">SURFconext Idensys PoC</esc:OrganizationDisplayName>
+    <esc:OrganizationDisplayName xml:lang="nl">SURFconext eIDAS PoC</esc:OrganizationDisplayName>
+    <esc:OrganizationDisplayName xml:lang="en">SURFconext eIDAS PoC</esc:OrganizationDisplayName>
     <esc:ServiceDefinition esc:IsPublic="true">
       <esc:ServiceUUID>3307D2EC-3B06-4ADC-99A0-341FF0275B4D</esc:ServiceUUID>
-      <esc:ServiceName xml:lang="nl">SURFconext Idensys PoC</esc:ServiceName>
-      <esc:ServiceName xml:lang="en">SURFconext Idensys PoC</esc:ServiceName>
-      <esc:ServiceDescription xml:lang="nl">SURFconext Idensys PoC</esc:ServiceDescription>
-      <esc:ServiceDescription xml:lang="en">SURFconext Idensys PoC</esc:ServiceDescription>
+      <esc:ServiceName xml:lang="nl">SURFconext eIDAS PoC</esc:ServiceName>
+      <esc:ServiceName xml:lang="en">SURFconext eIDAS PoC</esc:ServiceName>
+      <esc:ServiceDescription xml:lang="nl">SURFconext eIDAS PoC</esc:ServiceDescription>
+      <esc:ServiceDescription xml:lang="en">SURFconext eIDAS PoC</esc:ServiceDescription>
       <esc:ServiceDescriptionURL xml:lang="nl"
         >https://www.surf.nl/en/services-and-products/surfconext/index.html </esc:ServiceDescriptionURL>
       <saml:AuthnContextClassRef>urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport </saml:AuthnContextClassRef>

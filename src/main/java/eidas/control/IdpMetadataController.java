@@ -42,9 +42,6 @@ public class IdpMetadataController {
   @Autowired
   private CachingMetadataManager metadataManager;
 
-  @Value("${proxy.base_url}")
-  private String idensysBaseUrl;
-
   @Value("${proxy.entity_id}")
   private String entityId;
 

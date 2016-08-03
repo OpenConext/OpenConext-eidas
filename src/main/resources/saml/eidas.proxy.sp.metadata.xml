@@ -89,7 +89,7 @@
     <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact"
                                  Location="http://localhost:8080/saml/SSO" index="1"/>
     <md:AttributeConsumingService index="1">
-      <md:ServiceName xml:lang="nl">SURFnet Idensys TEST</md:ServiceName>
+      <md:ServiceName xml:lang="nl">SURFnet eIDAS TEST</md:ServiceName>
       <md:RequestedAttribute Name="urn:etoegang:DV:00000003300907770000:services:0001"/>
     </md:AttributeConsumingService>
   </md:SPSSODescriptor>

@@ -1,4 +1,4 @@
-# The logging configuration. On a real server this will be a file url. e.g. file://{{ idensys_dir }}/logback.xml
+# The logging configuration. On a real server this will be a file url. e.g. file://{{ eidas_dir }}/logback.xml
 logging:
   config: classpath:logback.xml
   level:
