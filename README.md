@@ -7,7 +7,7 @@ ServiceProvider for eIDAS
 
 ### [System Requirements](#system-requirements)
 
-- Java 7
+- Java 8
 - Maven 3
 
 ## [Deployment](#deployment)
