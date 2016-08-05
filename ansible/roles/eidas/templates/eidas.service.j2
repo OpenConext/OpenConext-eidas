@@ -1,0 +1,11 @@
+[Unit]
+Description=eidas
+After=network-online.target
+
+[Service]
+User=eidas
+ExecStart=/opt/eidas/eidas.jar
+SuccessExitStatus=143
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,11 @@
+---
+eidas_dir: /opt/eidas
+eidas_group_id: org.openconext
+eidas_artifact: eidas
+eidas_heapsize: 2048m
+eidas_port: 9290
+eidas_user: eidas
+eidas_group: eidas
+eidas_loggers:
+  - { name: "eidas", level: "DEBUG" }
+  - { name: "org.springframework.security", level: "DEBUG" }
