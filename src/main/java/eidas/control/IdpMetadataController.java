@@ -18,7 +18,6 @@ import org.opensaml.xml.signature.SignatureException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.saml.key.KeyManager;
-import org.springframework.security.saml.metadata.CachingMetadataManager;
 import org.springframework.security.saml.metadata.ExtendedMetadata;
 import org.springframework.security.saml.util.SAMLUtil;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,9 +37,6 @@ public class IdpMetadataController {
 
   @Autowired
   private KeyManager keyManager;
-
-  @Autowired
-  private CachingMetadataManager metadataManager;
 
   @Value("${proxy.entity_id}")
   private String entityId;
@@ -67,7 +63,7 @@ public class IdpMetadataController {
 
     EntityDescriptor entityDescriptor = buildSAMLObject(EntityDescriptor.class, EntityDescriptor.DEFAULT_ELEMENT_NAME);
     entityDescriptor.setEntityID(entityId);
-    entityDescriptor.setID("urn_etoegang_DV_00000003300907770000_entities_0001");
+    entityDescriptor.setID("eidas_entity_descriptor");
     entityDescriptor.setValidUntil(this.validUntil);
 
 
@@ -111,7 +107,7 @@ public class IdpMetadataController {
     extendedMetadata.setSigningKey(entityId);
     extendedMetadata.setLocal(true);
 
-    return SAMLUtil.getMetadataAsString(metadataManager, keyManager, entityDescriptor, extendedMetadata);
+    return SAMLUtil.getMetadataAsString(null, keyManager, entityDescriptor, extendedMetadata);
 
   }
 
