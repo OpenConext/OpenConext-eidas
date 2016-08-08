@@ -1,4 +1,6 @@
 ---
+eidas_version: 1.0.0-SNAPSHOT
+eidas_dir: /opt/eidas
 eidas_vhost_name: eidas.example.com
 smtp_server: localhost
 error_mail_to: logs@example.org
@@ -8,3 +10,35 @@ email_noreply: noreply@example.com
 # Format: X.509 PEM certificate, PEM private key
 eidas_ssl_cert: "{{ lookup('file', inventory_dir+'/ssl_cert/eidas.crt') }}"
 eidas_ssl_key: "{{ lookup('file', inventory_dir+'/ssl_cert/eidas.key') }}"
+
+eidas_proxy:
+  entity_id: eidas_entity
+  private_key: "{{ lookup('file', inventory_dir+'/saml_cert/eidas.key') }}"
+  certificate: "{{ lookup('file', inventory_dir+'/saml_cert/eidas.crt') }}"
+  key_name: eidas_key
+  sp_metadata_feed: https://example.com/authentication/sp/metadata
+  idp_metadata_feed: https://tst-peps.minez.nl/PEPS/ServiceProvider/metadata
+  service_name: eIDAS TEST
+  service_id: urn:eidas:peps.minez.nl:0001
+  organization_name: Organization
+  organization_display_name: Organization
+  organization_url: http://www.example.com
+  technical_contact_givenname: John Doe
+  technical_contact_surname: Support
+  technical_contact_email: john@example.com
+  technical_contact_telephone: +31123456789
+
+eidas_sp:
+  destination: https://tst-peps.minez.nl/PEPS/ServiceProvider
+  acs_url: https://tst-peps.minez.nl/PEPS/ServiceProvider/sp-demo/response
+  provider_name: NL-DEMO-SP
+  issuer: eidas_entity
+  qaa_level: 3
+  sector: NL-DEMO-SP
+  institution: N-DEMO-SP
+  application: NL-DEMO-SP
+  country: NL
+  requested_attributes:
+    names: eIdentifier,givenName,surname,inheritedFamilyName,dateOfBirth,gender,textResidenceAddress
+    mandatory_values: true,true,true,true,true,true,true
+    optional_values: ,,,,,,

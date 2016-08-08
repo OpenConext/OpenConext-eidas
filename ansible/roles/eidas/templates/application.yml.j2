@@ -41,3 +41,18 @@ proxy:
   key_name: {{ eidas_proxy.key_name }}
   # the resource location of the metadata for the SP
   metadata_resource_sp: file://{{ eidas_dir }}/eidas.proxy.sp.metadata.xml
+
+sp:
+  destination: {{ eidas_sp.destination }}
+  acs_url: {{ eidas_sp.acs_url }}
+  provider_name: {{ eidas_sp.provider_name }}
+  issuer: {{ eidas_sp.issuer }}
+  qaa_level: {{ eidas_sp.qaa_level }}
+  sector: {{ eidas_sp.sector }}
+  institution: {{ eidas_sp.institution }}
+  application: {{ eidas_sp.application }}
+  country: {{ eidas_sp.country }}
+  requested_attributes:
+    names: {{ eidas_sp.requested_attributes.names }}
+    mandatory_values: {{ eidas_sp.requested_attributes.mandatory_values }}
+    optional_values: {{ eidas_sp.requested_attributes.optional_values }}
