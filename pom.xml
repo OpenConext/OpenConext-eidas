@@ -64,16 +64,6 @@
       <groupId>MOA.id</groupId>
       <artifactId>stork-saml-engine</artifactId>
       <version>1.5.2</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>bcprov-jdk15on</artifactId>
-          <groupId>org.bouncycastle</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>commons-collections</artifactId>
-          <groupId>commons-collections</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>

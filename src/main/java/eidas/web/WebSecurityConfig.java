@@ -1,11 +1,30 @@
 package eidas.web;
 
+import static java.util.Collections.singletonList;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
+import javax.servlet.Filter;
+import javax.xml.stream.XMLStreamException;
+
 import org.apache.velocity.app.VelocityEngine;
 import org.opensaml.common.binding.security.IssueInstantRule;
 import org.opensaml.common.binding.security.MessageReplayRule;
 import org.opensaml.saml2.binding.decoding.HTTPRedirectDeflateDecoder;
 import org.opensaml.saml2.binding.encoding.HTTPPostSimpleSignEncoder;
-import org.opensaml.saml2.core.AuthnContextComparisonTypeEnumeration;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
 import org.opensaml.saml2.metadata.provider.MetadataProviderException;
 import org.opensaml.util.storage.MapBasedStorageService;
@@ -13,6 +32,7 @@ import org.opensaml.util.storage.ReplayCache;
 import org.opensaml.ws.security.SecurityPolicyResolver;
 import org.opensaml.ws.security.provider.BasicSecurityPolicy;
 import org.opensaml.ws.security.provider.StaticSecurityPolicyResolver;
+import org.opensaml.xml.ConfigurationException;
 import org.opensaml.xml.parse.ParserPool;
 import org.opensaml.xml.parse.StaticBasicParserPool;
 import org.opensaml.xml.signature.SignatureConstants;
@@ -32,14 +52,16 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.saml.SAMLAuthenticationProvider;
-import org.springframework.security.saml.SAMLEntryPoint;
-import org.springframework.security.saml.SAMLProcessingFilter;
 import org.springframework.security.saml.context.SAMLContextProviderImpl;
 import org.springframework.security.saml.key.KeyManager;
-import org.springframework.security.saml.metadata.*;
+import org.springframework.security.saml.metadata.CachingMetadataManager;
+import org.springframework.security.saml.metadata.ExtendedMetadata;
+import org.springframework.security.saml.metadata.ExtendedMetadataDelegate;
+import org.springframework.security.saml.metadata.MetadataDisplayFilter;
+import org.springframework.security.saml.metadata.MetadataGenerator;
+import org.springframework.security.saml.metadata.MetadataGeneratorFilter;
 import org.springframework.security.saml.parser.ParserPoolHolder;
 import org.springframework.security.saml.util.VelocityFactory;
-import org.springframework.security.saml.websso.WebSSOProfileOptions;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -48,22 +70,20 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationFa
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import eidas.saml.*;
-
-import javax.servlet.Filter;
-import javax.xml.stream.XMLStreamException;
-
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
-import java.security.spec.InvalidKeySpecException;
-import java.util.*;
-
-import static java.util.Collections.singletonList;
+import eidas.saml.CustomMetadataGenerator;
+import eidas.saml.DefaultMetadataDisplayFilter;
+import eidas.saml.DefaultSAMLUserDetailsService;
+import eidas.saml.IdentityProviderAuthnFilter;
+import eidas.saml.KeyNamedJKSKeyManager;
+import eidas.saml.KeyStoreLocator;
+import eidas.saml.ProxiedSAMLContextProviderLB;
+import eidas.saml.ProxySAMLAuthenticationProvider;
+import eidas.saml.ProxyURIComparator;
+import eidas.saml.ResourceMetadataProvider;
+import eidas.saml.SAMLMessageHandler;
+import eidas.saml.ServiceProvider;
+import eidas.saml.ServiceProviderFeedParser;
+import eu.stork.vidp.messages.common.STORKBootstrap;
 
 @Configuration
 @EnableWebSecurity
@@ -83,13 +103,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   private String eidasEntityId;
 
   @Value("${proxy.private_key}")
-  private String eidasPrivateKey;
+  private String proxyPrivateKey;
 
   @Value("${proxy.certificate}")
-  private String eidasCertificate;
+  private String proxyCertificate;
 
   @Value("${proxy.passphrase}")
-  private String eidasPassphrase;
+  private String proxyPassphrase;
 
   @Value("${proxy.acs_location}")
   private String eidasACSLocation;
@@ -109,9 +129,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   @Value("${proxy.metadata_resource_sp}")
   private Resource metadataResourceSp;
 
+  @Value("${sp.destination}")
+  private String eidasDestination;
+
+  @Value("${sp.certificate}")
+  private String eidasCertificate;
+
   private DefaultResourceLoader defaultResourceLoader = new DefaultResourceLoader();
 
   private Map<String, ServiceProvider> serviceProviders;
+
+  @PostConstruct
+  public void init() throws ConfigurationException {
+      STORKBootstrap.bootstrap();
+  }
 
   @Bean
   public SAMLAuthenticationProvider samlAuthenticationProvider() {
@@ -120,19 +151,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     samlAuthenticationProvider.setForcePrincipalAsString(false);
     samlAuthenticationProvider.setExcludeCredential(false);
     return samlAuthenticationProvider;
-  }
-
-  @Bean
-  public SAMLEntryPoint samlEntryPoint() {
-    WebSSOProfileOptions webSSOProfileOptions = new WebSSOProfileOptions();
-    webSSOProfileOptions.setIncludeScoping(false);
-    webSSOProfileOptions.setBinding("urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect");
-    webSSOProfileOptions.setAuthnContexts(Collections.singletonList("urn:etoegang:core:assurance-class:loa3"));
-    webSSOProfileOptions.setAuthnContextComparison(AuthnContextComparisonTypeEnumeration.MINIMUM);
-
-    SAMLEntryPoint samlEntryPoint = new SAMLEntryPoint();
-    samlEntryPoint.setDefaultProfileOptions(webSSOProfileOptions);
-    return samlEntryPoint;
   }
 
   @Bean
@@ -181,16 +199,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Bean
   @Autowired
-  public SAMLProcessingFilter samlWebSSOProcessingFilter() throws Exception {
-    SAMLProcessingFilter samlWebSSOProcessingFilter = new SAMLProcessingFilter();
-    samlWebSSOProcessingFilter.setAuthenticationManager(authenticationManager());
-    samlWebSSOProcessingFilter.setAuthenticationSuccessHandler(new ProxyAuthenticationSuccessHandler(samlMessageHandler()));
-    samlWebSSOProcessingFilter.setAuthenticationFailureHandler(authenticationFailureHandler());
-    return samlWebSSOProcessingFilter;
-  }
-
-  @Bean
-  @Autowired
   public MetadataGeneratorFilter metadataGeneratorFilter() throws InvalidKeySpecException, CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, XMLStreamException {
     return new MetadataGeneratorFilter(metadataGenerator());
   }
@@ -199,9 +207,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   public FilterChainProxy samlFilter() throws Exception {
     List<SecurityFilterChain> chains = new ArrayList<>();
     chains.add(chain("/saml/idp/**", identityProviderAuthnFilter()));
-    chains.add(chain("/saml/login/**", samlEntryPoint()));
     chains.add(chain("/sp/metadata/**", metadataDisplayFilter()));
-    chains.add(chain("/saml/SSO/**", samlWebSSOProcessingFilter()));
     return new FilterChainProxy(chains);
   }
 
@@ -284,9 +290,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   @Bean
   public KeyManager keyManager() throws InvalidKeySpecException, CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, XMLStreamException {
     KeyStoreLocator keyStoreLocator = new KeyStoreLocator();
-    KeyStore keyStore = keyStoreLocator.createKeyStore(eidasPassphrase);
+    KeyStore keyStore = keyStoreLocator.createKeyStore(proxyPassphrase);
 
-    keyStoreLocator.addPrivateKey(keyStore, eidasEntityId, eidasPrivateKey, eidasCertificate, eidasPassphrase);
+    keyStoreLocator.addPrivateKey(keyStore, eidasEntityId, proxyPrivateKey, proxyCertificate, proxyPassphrase);
+
+    keyStoreLocator.addCertificate(keyStore, eidasDestination, eidasCertificate);
 
     this.serviceProviders = getServiceProviders();
     serviceProviders.entrySet().forEach(sp -> {
@@ -299,7 +307,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         throw new RuntimeException(e);
       }
     });
-    return new KeyNamedJKSKeyManager(keyStore, Collections.singletonMap(eidasEntityId, eidasPassphrase), eidasEntityId, proxyKeyName);
+    return new KeyNamedJKSKeyManager(keyStore, Collections.singletonMap(eidasEntityId, proxyPassphrase), eidasEntityId, proxyKeyName);
   }
 
   private Map<String, ServiceProvider> getServiceProviders() throws IOException, XMLStreamException {
@@ -308,7 +316,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
       this.serviceProviders = new ServiceProviderFeedParser(defaultResourceLoader.getResource(serviceProvidersFeedUrl)).parse();
     }
     if (environment.acceptsProfiles("dev")) {
-      this.serviceProviders.put(eidasEntityId, new ServiceProvider(eidasEntityId, eidasCertificate, singletonList(eidasACSLocation)));
+      this.serviceProviders.put(eidasEntityId, new ServiceProvider(eidasEntityId, proxyCertificate, singletonList(eidasACSLocation)));
     }
     return this.serviceProviders;
   }

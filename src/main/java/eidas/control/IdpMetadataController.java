@@ -66,7 +66,6 @@ public class IdpMetadataController {
     entityDescriptor.setID("eidas_entity_descriptor");
     entityDescriptor.setValidUntil(this.validUntil);
 
-
     IDPSSODescriptor idpssoDescriptor = buildSAMLObject(IDPSSODescriptor.class, IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
 
     NameIDFormat nameIDFormat = buildSAMLObject(NameIDFormat.class, NameIDFormat.DEFAULT_ELEMENT_NAME);
@@ -108,7 +107,5 @@ public class IdpMetadataController {
     extendedMetadata.setLocal(true);
 
     return SAMLUtil.getMetadataAsString(null, keyManager, entityDescriptor, extendedMetadata);
-
   }
-
 }

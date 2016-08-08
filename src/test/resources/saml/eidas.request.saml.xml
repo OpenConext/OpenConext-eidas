@@ -1,0 +1,60 @@
+
+
+<saml2p:AuthnRequest xmlns:saml2p="urn:oasis:names:tc:SAML:2.0:protocol" AssertionConsumerServiceURL="https://localhost:8080/saml/acs" Consent="urn:oasis:names:tc:SAML:2.0:consent:unspecified"
+  Destination="https://tst-peps.minez.nl/PEPS/ServiceProvider" ForceAuthn="true" ID="_bc3509d828b34597a0dc4677cadfc677" IsPassive="false" IssueInstant="2016-08-08T11:56:01.601Z"
+  ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" ProviderName="Surfnet-SP" Version="2.0">
+  <saml2:Issuer xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion" Format="urn:oasis:names:tc:SAML:2.0:nameid-format:entity">https://eidas.localhost.surfconext.nl
+  </saml2:Issuer>
+  <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+    <ds:SignedInfo>
+      <ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" />
+      <ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" />
+      <ds:Reference URI="#_bc3509d828b34597a0dc4677cadfc677">
+        <ds:Transforms>
+          <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" />
+          <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" />
+        </ds:Transforms>
+        <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+        <ds:DigestValue>cg2/56u/+8Y9St7BMd71NRbsw5I=</ds:DigestValue>
+      </ds:Reference>
+    </ds:SignedInfo>
+    <ds:SignatureValue>ON11ZxdW5jgbCOTQOkt6JDn+8u8BLU0UrSAyI388tjttBMB/KbgQTylsgvYiZxIARKHBtXTRdVZ10uLbudKPrRl2kDHBkBF0Eg7h7z35ap9IkMpMv0sS9pBOuVezxLyprO/TAaZF40q5UVuRUImfjvlHfgeRu0Sar0oYc6O+KK3RLKU/PrsbunAnaw7+73j0wv3/w+dQqYzykcLhvseDQ9S5F7vM4lU3YVDlE6LPn2l93LdXMFchlsrAWgTL81oDuzHXxzEouh9R1xgkQFdiPqBdSBfXBEJXVyiD2HGyKwcqgLi86VHgcElhKHr/a788y0r735A4oTtxeNnFM+8n0g==
+    </ds:SignatureValue>
+    <ds:KeyInfo>
+      <ds:X509Data>
+        <ds:X509Certificate>MIIDPjCCAiagAwIBAgIJAKg3FyvbFyryMA0GCSqGSIb3DQEBBQUAMB4xHDAaBgNVBAoTE1NVUkZu
+          ZXQsIENOPUlkZW5zeXMwHhcNMTYwNjA5MDczODM3WhcNMjYwNjA5MDczODM3WjAeMRwwGgYDVQQK
+          ExNTVVJGbmV0LCBDTj1JZGVuc3lzMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAu85s
+          gd7E6hhk8LqJJIe+aUBVU6gWKGBbFz1aj5dNvfTqoTWKRK3yp2GMqcqNwDAsSScWSixsHRdCY3no
+          MgvQW8E3l5MEjoUXN/UEciB7g7FJK6uopnCkUIzKp/dCUV5uqNTzB8/NOwhy9swgs4H77YHAaXlA
+          2ePm2vauf0QMLAJfyi90k3YG1sk9ekyMTgcxUrRLfUKQDnz4i8I9/dtuVj+5v7/wSR1fDB8BxgYN
+          VmF/h/2oeTUliTEo/9F0qBvpa4kvRzmz6RT/wa38E3pr68am8+5bx6M3FU+mycfmpc+CFmGFNKbT
+          GRBtiwkIwyta55HGOxG4lKikIXvpeEu05wIDAQABo38wfTAdBgNVHQ4EFgQUg62VZtg/0Vnz7x5P
+          M/IIU5oPYfAwTgYDVR0jBEcwRYAUg62VZtg/0Vnz7x5PM/IIU5oPYfChIqQgMB4xHDAaBgNVBAoT
+          E1NVUkZuZXQsIENOPUlkZW5zeXOCCQCoNxcr2xcq8jAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEB
+          BQUAA4IBAQCEPnyvxcsOL1ZakINodIPNjMfSSqh9aVEW231Luaz/1ow81YfW8woIMOl2VAT7bp6B
+          EVkYS91qdOxynVV+CKjaLLhR+zNC2mLW8whv4ZDt4arCBUWHjEUXLGhFTqE+0tofaWtUsXAWrJFO
+          PGbq2EvLRIza2o4JSI6cIO97q2f5VrDwyNHO3QiEdTBBBbbCtx526W56IlVlxX1lRFR05q6gzmpr
+          Mf0lkoX/EBq3ELtpEhd5Z2d5V59GXsgNbe+oW6BVUGSsbwk4yyQcx39338Qfl9k1WpjAXIFnRzT4
+          npy/M5JIfg6p1kN9nygrhpoHBEhQ160h7hLjHQb6Qnbqv5Pw
+        </ds:X509Certificate>
+      </ds:X509Data>
+    </ds:KeyInfo>
+  </ds:Signature>
+  <saml2p:Extensions>
+    <stork:QualityAuthenticationAssuranceLevel xmlns:stork="urn:eu:stork:names:tc:STORK:1.0:assertion">3</stork:QualityAuthenticationAssuranceLevel>
+    <stork:spSector xmlns:stork="urn:eu:stork:names:tc:STORK:1.0:assertion">Education</stork:spSector>
+    <stork:spInstitution xmlns:stork="urn:eu:stork:names:tc:STORK:1.0:assertion">SURFnet</stork:spInstitution>
+    <stork:spApplication xmlns:stork="urn:eu:stork:names:tc:STORK:1.0:assertion">SURFConext</stork:spApplication>
+    <stork:spCountry xmlns:stork="urn:eu:stork:names:tc:STORK:1.0:assertion">NL</stork:spCountry>
+    <storkp:eIDSectorShare xmlns:storkp="urn:eu:stork:names:tc:STORK:1.0:protocol">true</storkp:eIDSectorShare>
+    <storkp:eIDCrossSectorShare xmlns:storkp="urn:eu:stork:names:tc:STORK:1.0:protocol">true</storkp:eIDCrossSectorShare>
+    <storkp:eIDCrossBorderShare xmlns:storkp="urn:eu:stork:names:tc:STORK:1.0:protocol">false</storkp:eIDCrossBorderShare>
+    <storkp:RequestedAttributes xmlns:storkp="urn:eu:stork:names:tc:STORK:1.0:protocol">
+      <stork:RequestedAttribute xmlns:stork="urn:eu:stork:names:tc:STORK:1.0:assertion" Name="http://www.stork.gov.eu/1.0/eIdentifier" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"
+        isRequired="true" />
+      <stork:RequestedAttribute xmlns:stork="urn:eu:stork:names:tc:STORK:1.0:assertion" Name="http://www.stork.gov.eu/1.0/givenName" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"
+        isRequired="true" />
+    </storkp:RequestedAttributes>
+  </saml2p:Extensions>
+</saml2p:AuthnRequest>

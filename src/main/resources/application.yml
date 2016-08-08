@@ -47,6 +47,56 @@ proxy:
   # the resource location of the metadata for the SP
   metadata_resource_sp: classpath:saml/eidas.proxy.sp.metadata.xml
 
+sp:
+  destination: https://tst-peps.minez.nl/PEPS/ServiceProvider
+  certificate: |
+    MIIHgjCCBWqgAwIBAgIUDG49FiCHQxlDjeQz95f4INk/WSQwDQYJKoZIhvcNAQELBQAwgYUxCzAJ
+    BgNVBAYTAk5MMR4wHAYDVQQKDBVRdW9WYWRpcyBUcnVzdGxpbmsgQlYxKDAmBgNVBAsMH0lzc3Vp
+    bmcgQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkxLDAqBgNVBAMMI1F1b1ZhZGlzIENTUCAtIFBLSSBP
+    dmVyaGVpZCBDQSAtIEcyMB4XDTE0MDMyNjE1MzE0MFoXDTE3MDMyNjE1MzEzN1owga0xHTAbBgNV
+    BAUTFDAwMDAwMDAxMDAzMTY2OTQ2MDAwMQswCQYDVQQGEwJOTDEpMCcGA1UEChMgbWluaXN0ZXJp
+    ZSB2YW4gRWNvbm9taXNjaGUgWmFrZW4xHjAcBgNVBAsTFURpZW5zdCBJQ1QgVWl0dm9lcmluZzE0
+    MDIGA1UEAxMrQUNDLU5MLU1pbkVaLVBFUFMtU0FNTC1DbGllbnQtU2lnbi5taW5lei5ubDCCASIw
+    DQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAOHYFPWH9OoLdwIzU4yc6PZpMI3o/RlTwPvFsn7+
+    UryLNBHY4ZOtuB8GXfM30qNzYNHtrYPudrtyOnZBFqonGySjbc4tNO4QVUQqxpcs7v9SBFZeHCS6
+    96As2zF/RXjlBSxzSzpK6a5zGv9FEx6vRjP/uHU+XESk0XH5TlZIdKibn5FHEcYuUFR5egbmbCci
+    P7tgJgqwgXqgqFMcWTCQjHZB25bc8cccbX1lR9yzYFqnV15vwhDgH+0cnD+tyEfN6OFfyR9J98ji
+    2pbJmi8fYdNX8mGeEleDVXFsgi1vTcYTw/nKg1UoqYdnCprQ+4mgbjSIlgwJvIvQxqKmVfYnQEsC
+    AwEAAaOCAr4wggK6MAwGA1UdEwEB/wQCMAAwggExBgNVHSAEggEoMIIBJDCCASAGCmCEEAGHawEC
+    BQQwggEQMIHXBggrBgEFBQcCAjCByhqBx1JlbGlhbmNlIG9uIHRoaXMgY2VydGlmaWNhdGUgYnkg
+    YW55IHBhcnR5IGFzc3VtZXMgYWNjZXB0YW5jZSBvZiB0aGUgcmVsZXZhbnQgUXVvVmFkaXMgQ2Vy
+    dGlmaWNhdGlvbiBQcmFjdGljZSBTdGF0ZW1lbnQgYW5kIG90aGVyIGRvY3VtZW50cyBpbiB0aGUg
+    UXVvVmFkaXMgcmVwb3NpdG9yeSAgKGh0dHA6Ly93d3cucXVvdmFkaXNnbG9iYWwuY29tKS4wNAYI
+    KwYBBQUHAgEWKGh0dHA6Ly93d3cucXVvdmFkaXNnbG9iYWwuY29tL3JlcG9zaXRvcnkwSQYDVR0R
+    BEIwQKA+BgorBgEEAYI3FAIDoDAMLjIuMTYuNTI4LjEuMTAwMy4xLjMuNS4yLjEtMDAwMDAwMDEw
+    MDMxNjY5NDYwMDAwcwYIKwYBBQUHAQEEZzBlMCoGCCsGAQUFBzABhh5odHRwOi8vb2NzcC5xdW92
+    YWRpc2dsb2JhbC5jb20wNwYIKwYBBQUHMAKGK2h0dHA6Ly90cnVzdC5xdW92YWRpc2dsb2JhbC5j
+    b20vcXZvY2FnMi5jcnQwDgYDVR0PAQH/BAQDAgeAMCkGA1UdJQQiMCAGCCsGAQUFBwMCBggrBgEF
+    BQcDBAYKKwYBBAGCNxQCAjAfBgNVHSMEGDAWgBRpy39QdgCGU5V5EsFYdh8T7/JNozA6BgNVHR8E
+    MzAxMC+gLaArhilodHRwOi8vY3JsLnF1b3ZhZGlzZ2xvYmFsLmNvbS9xdm9jYWcyLmNybDAdBgNV
+    HQ4EFgQU2/kYM8M2zvTbNKoe/JcaMDSg8tswDQYJKoZIhvcNAQELBQADggIBAF1G1YTeuOn+VFFJ
+    nQjN1couk01CdZiOrJzoBJ0FG7E3OPPgkvqfEwCM94cXiObC7/J+Obuk9XpRcBhww6SddtxTctVc
+    oxReFR6jnPbHky4SVXLfHnLAc0w7gVzb0WeRtNI87ELKgmnmYlgBj2QgH4gxYszUvAKmZLHZlxNW
+    9xdU9q2eK+2lGhuDQwOJv4rE4q7VC3hrhTEqT/XqFusENPWF1QiZQ5uN7MtF7lrHsrXYNApsxgWJ
+    fp/TxZwj4jSbqc+PQ0Pdoe6kyrBh7QQ/pR6WgPBI25PQlBJgqZ1+EwyrBDGkwCOY/EJq0uZFtLky
+    Jy+s1gatf8NUh71cb/3CDe2HwaCrwvGeDvZDCiNX48esNYIVvmCoDa6vqpyhyCLQwemh84ZU805q
+    NBK5YZGoh/IqNNQ1Xe7HE6DrWLsbm/sLtjkuekTeZ1xsrgUOhU40p1m+hWAU0Kx6ReJKHeAMx9Wj
+    ZkqJ4krBDUyjSddEFF5Mc6FblIndDG/mE1O+wc5+bMfADcJ2cOcOmM06IK7Yuaqfk91lLLYA92J/
+    HSWX5dcgdrxph13jA8M1ImYnr7pCLnTPE2EShEokKCQ8EAf7fFhXdZHWALsFpcK/XjKup9ybvuax
+    /InUZz89Y6W7KiSaqaJ8S1Y7jAK5yFkREzKq5sKL0D7HlW6bck0R2UcWfByf
+  acs_url: https://localhost:8080/saml/acs
+  provider_name: Surfnet-SP
+  issuer: https://eidas.localhost.surfconext.nl
+  qaa_level: 3
+  sector: Education
+  institution: SURFnet
+  application: SURFConext
+  country: NL
+  requested_attributes:
+    names: eIdentifier,givenName #,surname,inheritedFamilyName,dateOfBirth,gender,textResidenceAddress
+    mandatory_values: true,true #,true,true,true,true,true
+    optional_values: "," #,,,,,"
+
 # You can skip all the key-value pairs below in the overriding application.yml on the classpath
 
 spring:

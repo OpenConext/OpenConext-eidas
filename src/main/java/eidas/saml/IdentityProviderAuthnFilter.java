@@ -38,6 +38,7 @@ public class IdentityProviderAuthnFilter extends OncePerRequestFilter implements
 
   @Override
   public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+    // FIXME is this needed?
     if (authenticationNotRequired()) {
       sendAuthResponse(response);
       return;
@@ -47,6 +48,7 @@ public class IdentityProviderAuthnFilter extends OncePerRequestFilter implements
       if (!request.getRequestURI().contains("test")) {
         throw new IllegalArgumentException("No SAMLRequest or SAMLResponse query path parameter, invalid SAML 2 HTTP Redirect message");
       }
+
       //sendAuthnRequest to EB
       SecurityContextHolder.getContext().setAuthentication(new SAMLAuthentication(new NoProxySAMLPrincipal()));
       request.getRequestDispatcher("/saml/login").forward(request, response);
@@ -57,7 +59,7 @@ public class IdentityProviderAuthnFilter extends OncePerRequestFilter implements
     HttpServletRequest inputRequest = environment.acceptsProfiles("local") ?
       new ParameterDecodingHttpServletRequestWrapper(request) : request;
 
-    SAMLMessageContext messageContext = samlMessageHandler.extractSAMLMessageContext(inputRequest);
+    SAMLMessageContext<?, ?, ?> messageContext = samlMessageHandler.extractSAMLMessageContext(inputRequest);
 
     AuthnRequest authnRequest = (AuthnRequest) messageContext.getInboundSAMLMessage();
 

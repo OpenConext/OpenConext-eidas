@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
-                     xmlns:eme="urn:etoegang:1.9:metadata-extension" xmlns:xml="http://www.w3.org/XML/1998/namespace"
-                     ID="{{ eidas_proxy.entity_id | replace(':', '_') }}"
-                     entityID="{{ eidas_proxy.entity_id }}" eme:version="1.9">
+                     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+                     ID="{{ eidas_proxy.service_id | replace(':', '_') }}"
+                     entityID="{{ eidas_proxy.service_id }}">
   <md:SPSSODescriptor AuthnRequestsSigned="true" WantAssertionsSigned="true"
                       protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
     <md:KeyDescriptor use="signing">
@@ -16,7 +16,7 @@
     </md:KeyDescriptor>
     <md:KeyDescriptor use="encryption">
       <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
-        <ds:KeyName>64:A5:D8:C7:50:8E:BA:E7:3C:56:3F:80:A6:CB:04:25:15:82:E8:E6</ds:KeyName>
+        <ds:KeyName>{{ eidas_proxy.key_name }}</ds:KeyName>
         <ds:X509Data>
           <ds:X509Certificate>{{ eidas_proxy.certificate | depem }}
           </ds:X509Certificate>

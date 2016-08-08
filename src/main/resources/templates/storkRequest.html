@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title th:text="#{eidas.title}"></title>
+  <meta charset='utf-8'/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <link rel="stylesheet" type="text/css" href="/css/app.css" th:href="@{/css/app.css}"/>
+</head>
+<body>
+<form action="#" th:action="${model.pepsUrl}" method="post">
+    <table>
+            <tr>
+                <td>Country</td>
+                <td>SAMLRequest</td>
+            </tr>
+            <tr>
+                <td><input type="text" name="country" th:value="${model.countrycode}"/></td>
+                <td><textarea name="SAMLRequest" cols="80" rows="5" th:text="${model.requestStr}" ></textarea></td>
+            </tr>
+            <tr>
+                <td colspan="2"><input type="submit" value="Submit"/></td>
+            </tr>
+    </table>
+</form>
+</body>
+</html>

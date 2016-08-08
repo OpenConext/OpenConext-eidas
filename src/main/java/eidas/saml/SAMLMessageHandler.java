@@ -62,8 +62,8 @@ public class SAMLMessageHandler {
       getValidatorSuite("saml2-core-spec-validator"));
   }
 
-  public SAMLMessageContext extractSAMLMessageContext(HttpServletRequest request) {
-    BasicSAMLMessageContext messageContext = new BasicSAMLMessageContext();
+  public SAMLMessageContext<?, ?, ?> extractSAMLMessageContext(HttpServletRequest request) {
+    BasicSAMLMessageContext<?, ?, ?> messageContext = new BasicSAMLMessageContext<>();
 
     messageContext.setInboundMessageTransport(new HttpServletRequestAdapter(request));
     messageContext.setSecurityPolicyResolver(resolver);

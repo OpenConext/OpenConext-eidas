@@ -113,13 +113,6 @@ public class WebSecurityConfigTest extends AbstractWebSecurityConfigTest {
 
 
   @Test
-  @Ignore
-  public void testSignature() throws Exception {
-    String xml = samlRequestUtils.signFile(new ClassPathResource("service_catalog.xml"));
-    //Copy & Paste the signature
-  }
-
-  @Test
   public void testInvalidACS() throws UnknownHostException, SecurityException, SignatureException, MarshallingException, MessageEncodingException {
     assertInvalidResponse(entityId, "http://bogus", "ServiceProvider " + entityId + " has not published ACS ");
   }
