@@ -54,6 +54,6 @@ sp:
   application: {{ eidas_sp.application }}
   country: {{ eidas_sp.country }}
   requested_attributes:
-    names: {{ eidas_sp.requested_attributes.names }}
-    mandatory_values: {{ eidas_sp.requested_attributes.mandatory_values }}
-    optional_values: {{ eidas_sp.requested_attributes.optional_values }}
+    names: "{{ eidas_sp.requested_attributes.names }}"
+    mandatory_values: "{{ eidas_sp.requested_attributes.mandatory_values }}"
+    optional_values: "{{ eidas_sp.requested_attributes.optional_values }}"
