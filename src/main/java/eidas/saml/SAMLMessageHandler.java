@@ -96,8 +96,8 @@ public class SAMLMessageHandler {
     }
   }
 
-  public void sendFailedAuthnResponse(SAMLAuthenticationException authenticationException, HttpServletResponse response) throws MarshallingException, SignatureException, MessageEncodingException {
-    doSendAuthnResponse(authenticationException.getPrincipal(), response, buildStatus(StatusCode.RESPONDER_URI, StatusCode.AUTHN_FAILED_URI, authenticationException.getMessage()));
+  public void sendFailedAuthnResponse(SAMLPrincipal principal, String message, HttpServletResponse response) throws MarshallingException, SignatureException, MessageEncodingException {
+    doSendAuthnResponse(principal, response, buildStatus(StatusCode.RESPONDER_URI, StatusCode.AUTHN_FAILED_URI, message));
   }
 
   @SuppressWarnings("unchecked")

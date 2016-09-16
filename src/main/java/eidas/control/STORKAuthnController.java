@@ -17,6 +17,9 @@ import org.opensaml.saml2.core.Assertion;
 import org.opensaml.saml2.core.Attribute;
 import org.opensaml.saml2.core.AttributeStatement;
 import org.opensaml.saml2.core.NameID;
+import org.opensaml.ws.message.encoder.MessageEncodingException;
+import org.opensaml.xml.io.MarshallingException;
+import org.opensaml.xml.signature.SignatureException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import eidas.saml.SAMLAttribute;
+import eidas.saml.SAMLAuthenticationException;
 import eidas.saml.SAMLBuilder;
 import eidas.saml.SAMLMessageHandler;
 import eidas.saml.SAMLPrincipal;
@@ -64,12 +68,14 @@ public class STORKAuthnController {
     }
 
     @RequestMapping(value = "/saml/acs", method = RequestMethod.POST)
-    public ModelAndView samlAssertionConsumerService(@RequestParam(required = true, value = "SAMLResponse") String samlResponse, HttpServletResponse servletResponse) throws SAMLException {
+    public void samlAssertionConsumerService(@RequestParam(required = true, value = "SAMLResponse") String samlResponse, HttpServletResponse servletResponse) throws SAMLException, MessageEncodingException, MarshallingException, SignatureException {
         byte[] response = Base64.getDecoder().decode(samlResponse);
         String samlResponseXML = new String(response, UTF_8);
         STORKResponse storkResponse = authnService.buildSTORKResponse(samlResponseXML);
 
         LOGGER.info("Received SAMLResponse: " + XMLUtil.printXML(storkResponse.getDOM()));
+
+        SAMLPrincipal principal = (SAMLPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         List<Assertion> assertions = storkResponse.getAssertions();
         if (storkResponse.getStatus().getStatusCode().getValue().endsWith(StatusCode.SUCCESS.getLocalPart())) {
@@ -88,13 +94,11 @@ public class STORKAuthnController {
                 }
             }
 
-            SAMLPrincipal principal = (SAMLPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             NameID nameID = storkResponse.getAssertions().get(0).getSubject().getNameID();
             principal.elevate(nameID.getValue(), nameID.getFormat(), attributes);
             samlMessageHandler.sendAuthnResponse(principal, servletResponse);
-            return null;
         } else {
-            return new ModelAndView("response", "errorMessage", storkResponse.getStatus().getStatusMessage().getMessage());
+            samlMessageHandler.sendFailedAuthnResponse(principal, storkResponse.getStatus().getStatusMessage().getMessage(), servletResponse);
         }
     }
 }
