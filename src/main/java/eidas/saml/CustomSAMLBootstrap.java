@@ -1,6 +1,7 @@
 package eidas.saml;
 
 import org.opensaml.Configuration;
+import org.opensaml.xml.ConfigurationException;
 import org.opensaml.xml.security.BasicSecurityConfiguration;
 import org.opensaml.xml.security.keyinfo.NamedKeyInfoGeneratorManager;
 import org.opensaml.xml.security.x509.X509KeyInfoGeneratorFactory;
@@ -9,12 +10,18 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.security.saml.SAMLConstants;
 
+import eu.stork.vidp.messages.common.STORKBootstrap;
+
 public class CustomSAMLBootstrap extends org.springframework.security.saml.SAMLBootstrap {
 
   public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-
     super.postProcessBeanFactory(beanFactory);
-
+    try {
+      STORKBootstrap.bootstrap();
+    } catch (ConfigurationException e) {
+      throw new RuntimeException(e);
+    }
+    setMetadataKeyInfoGenerator();
     BasicSecurityConfiguration config = (BasicSecurityConfiguration) Configuration.getGlobalSecurityConfiguration();
     config.registerSignatureAlgorithmURI("RSA", SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256);
     config.setSignatureReferenceDigestMethod(SignatureConstants.ALGO_ID_DIGEST_SHA256);

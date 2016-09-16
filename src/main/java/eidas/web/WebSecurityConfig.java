@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.Filter;
 import javax.xml.stream.XMLStreamException;
 
@@ -25,14 +24,12 @@ import org.opensaml.common.binding.security.IssueInstantRule;
 import org.opensaml.common.binding.security.MessageReplayRule;
 import org.opensaml.saml2.binding.decoding.HTTPRedirectDeflateDecoder;
 import org.opensaml.saml2.binding.encoding.HTTPPostSimpleSignEncoder;
-import org.opensaml.saml2.metadata.provider.MetadataProvider;
 import org.opensaml.saml2.metadata.provider.MetadataProviderException;
 import org.opensaml.util.storage.MapBasedStorageService;
 import org.opensaml.util.storage.ReplayCache;
 import org.opensaml.ws.security.SecurityPolicyResolver;
 import org.opensaml.ws.security.provider.BasicSecurityPolicy;
 import org.opensaml.ws.security.provider.StaticSecurityPolicyResolver;
-import org.opensaml.xml.ConfigurationException;
 import org.opensaml.xml.parse.ParserPool;
 import org.opensaml.xml.parse.StaticBasicParserPool;
 import org.opensaml.xml.signature.SignatureConstants;
@@ -56,7 +53,6 @@ import org.springframework.security.saml.context.SAMLContextProviderImpl;
 import org.springframework.security.saml.key.KeyManager;
 import org.springframework.security.saml.metadata.CachingMetadataManager;
 import org.springframework.security.saml.metadata.ExtendedMetadata;
-import org.springframework.security.saml.metadata.ExtendedMetadataDelegate;
 import org.springframework.security.saml.metadata.MetadataDisplayFilter;
 import org.springframework.security.saml.metadata.MetadataGenerator;
 import org.springframework.security.saml.metadata.MetadataGeneratorFilter;
@@ -82,7 +78,6 @@ import eidas.saml.ResourceMetadataProvider;
 import eidas.saml.SAMLMessageHandler;
 import eidas.saml.ServiceProvider;
 import eidas.saml.ServiceProviderFeedParser;
-import eu.stork.vidp.messages.common.STORKBootstrap;
 
 @Configuration
 @EnableWebSecurity
@@ -134,11 +129,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   private DefaultResourceLoader defaultResourceLoader = new DefaultResourceLoader();
 
   private Map<String, ServiceProvider> serviceProviders;
-
-  @PostConstruct
-  public void init() throws ConfigurationException {
-      STORKBootstrap.bootstrap();
-  }
 
   @Bean
   public SAMLAuthenticationProvider samlAuthenticationProvider() {
