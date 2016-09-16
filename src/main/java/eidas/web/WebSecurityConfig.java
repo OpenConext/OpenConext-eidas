@@ -72,7 +72,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import eidas.saml.CustomMetadataGenerator;
 import eidas.saml.DefaultMetadataDisplayFilter;
-import eidas.saml.DefaultSAMLUserDetailsService;
 import eidas.saml.IdentityProviderAuthnFilter;
 import eidas.saml.KeyNamedJKSKeyManager;
 import eidas.saml.KeyStoreLocator;
@@ -97,10 +96,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   private String identityProviderMetadataUrl;
 
   @Value("${proxy.base_url}")
-  private String eidasBaseUrl;
+  private String proxyBaseUrl;
 
   @Value("${proxy.entity_id}")
-  private String eidasEntityId;
+  private String proxyEntityId;
 
   @Value("${proxy.private_key}")
   private String proxyPrivateKey;
@@ -147,7 +146,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   @Bean
   public SAMLAuthenticationProvider samlAuthenticationProvider() {
     SAMLAuthenticationProvider samlAuthenticationProvider = new ProxySAMLAuthenticationProvider();
-    samlAuthenticationProvider.setUserDetails(new DefaultSAMLUserDetailsService());
     samlAuthenticationProvider.setForcePrincipalAsString(false);
     samlAuthenticationProvider.setExcludeCredential(false);
     return samlAuthenticationProvider;
@@ -173,7 +171,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
       .addFilterBefore(metadataGeneratorFilter(), ChannelProcessingFilter.class)
       .addFilterAfter(samlFilter(), BasicAuthenticationFilter.class)
       .authorizeRequests()
-      .antMatchers("/saml/idp/**", "/sp/metadata", "/saml/SSO/**", "/idp/metadata").permitAll()
+      .antMatchers("/saml/idp/**", "/sp/metadata", "/saml/acs/**", "/idp/metadata").permitAll()
       .anyRequest().hasRole("USER");
   }
 
@@ -225,7 +223,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     ExtendedMetadata extendedMetadata = new ExtendedMetadata();
     extendedMetadata.setIdpDiscoveryEnabled(false);
     extendedMetadata.setSignMetadata(true);
-    extendedMetadata.setTlsKey(eidasEntityId);
+    extendedMetadata.setTlsKey(proxyEntityId);
     extendedMetadata.setSigningAlgorithm(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256);
     return extendedMetadata;
   }
@@ -269,7 +267,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Bean
   public SAMLContextProviderImpl contextProvider() throws URISyntaxException {
-    return new ProxiedSAMLContextProviderLB(new URI(eidasBaseUrl));
+    return new ProxiedSAMLContextProviderLB(new URI(proxyBaseUrl));
   }
 
   @Bean
@@ -292,7 +290,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     KeyStoreLocator keyStoreLocator = new KeyStoreLocator();
     KeyStore keyStore = keyStoreLocator.createKeyStore(proxyPassphrase);
 
-    keyStoreLocator.addPrivateKey(keyStore, eidasEntityId, proxyPrivateKey, proxyCertificate, proxyPassphrase);
+    keyStoreLocator.addPrivateKey(keyStore, proxyEntityId, proxyPrivateKey, proxyCertificate, proxyPassphrase);
 
     keyStoreLocator.addCertificate(keyStore, eidasDestination, eidasCertificate);
 
@@ -300,14 +298,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     serviceProviders.entrySet().forEach(sp -> {
       try {
         ServiceProvider serviceProvider = sp.getValue();
-        if (serviceProvider.isSigningCertificateSigned() && !serviceProvider.getEntityId().equals(eidasEntityId)) {
+        if (serviceProvider.isSigningCertificateSigned() && !serviceProvider.getEntityId().equals(proxyEntityId)) {
           keyStoreLocator.addCertificate(keyStore, sp.getKey(), serviceProvider.getSigningCertificate());
         }
       } catch (CertificateException | KeyStoreException e) {
         throw new RuntimeException(e);
       }
     });
-    return new KeyNamedJKSKeyManager(keyStore, Collections.singletonMap(eidasEntityId, proxyPassphrase), eidasEntityId, proxyKeyName);
+    return new KeyNamedJKSKeyManager(keyStore, Collections.singletonMap(proxyEntityId, proxyPassphrase), proxyEntityId, proxyKeyName);
   }
 
   private Map<String, ServiceProvider> getServiceProviders() throws IOException, XMLStreamException {
@@ -316,7 +314,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
       this.serviceProviders = new ServiceProviderFeedParser(defaultResourceLoader.getResource(serviceProvidersFeedUrl)).parse();
     }
     if (environment.acceptsProfiles("dev")) {
-      this.serviceProviders.put(eidasEntityId, new ServiceProvider(eidasEntityId, proxyCertificate, singletonList(eidasACSLocation)));
+      this.serviceProviders.put(proxyEntityId, new ServiceProvider(proxyEntityId, proxyCertificate, singletonList(eidasACSLocation)));
     }
     return this.serviceProviders;
   }
@@ -324,18 +322,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   @Bean
   public SAMLMessageHandler samlMessageHandler() throws NoSuchAlgorithmException, CertificateException, InvalidKeySpecException, KeyStoreException, IOException, XMLStreamException {
     HTTPRedirectDeflateDecoder samlMessageDecoder = new HTTPRedirectDeflateDecoder(parserPool());
-    samlMessageDecoder.setURIComparator(new ProxyURIComparator(this.eidasBaseUrl, "http://localhost:" + this.serverPort));
+    samlMessageDecoder.setURIComparator(new ProxyURIComparator(this.proxyBaseUrl, "http://localhost:" + this.serverPort));
     return new SAMLMessageHandler(
       keyManager(),
       samlMessageDecoder,
       new HTTPPostSimpleSignEncoder(velocityEngine(), "/templates/saml2-post-simplesign-binding.vm", true),
       securityPolicyResolver(),
-      eidasEntityId);
+      proxyEntityId);
   }
 
   private SecurityPolicyResolver securityPolicyResolver() {
     IssueInstantRule instantRule = new IssueInstantRule(90, 300);
-    MessageReplayRule replayRule = new MessageReplayRule(new ReplayCache(new MapBasedStorageService(), 14400000));
+    MessageReplayRule replayRule = new MessageReplayRule(new ReplayCache(new MapBasedStorageService<>(), 14400000));
 
     BasicSecurityPolicy securityPolicy = new BasicSecurityPolicy();
     securityPolicy.getPolicyRules().addAll(Arrays.asList(instantRule, replayRule));

@@ -25,13 +25,7 @@ public class ProxyAuthenticationSuccessHandler implements AuthenticationSuccessH
     LOG.debug("Sending response for successful authentication {}", authentication);
 
     SAMLPrincipal principal = (SAMLPrincipal) authentication.getPrincipal();
-    if (principal instanceof NoProxySAMLPrincipal) {
-      response.sendRedirect("/test");
-      return;
-    } else {
-      samlMessageHandler.sendAuthnResponse(principal, response);
-    }
-
+    samlMessageHandler.sendAuthnResponse(principal, response);
   }
 
 }

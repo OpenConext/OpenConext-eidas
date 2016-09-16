@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class HomeController {
 
-  @RequestMapping(path = {"/user", "/test"})
+  @RequestMapping(path = "/user")
   public String user(Authentication authentication, ModelMap modelMap) {
     modelMap.addAttribute("user", authentication.getPrincipal());
     return "user";

@@ -141,7 +141,7 @@ public class SAMLBuilder {
     Signer.signObject(signature);
   }
 
-  public static Optional<String> getStringValueFromXMLObject(XMLObject xmlObj, SAMLMessageContext context) {
+  public static Optional<String> getStringValueFromXMLObject(XMLObject xmlObj) {
     if (xmlObj instanceof XSString) {
       return Optional.of(((XSString) xmlObj).getValue());
     } else if (xmlObj instanceof XSAny) {
@@ -156,18 +156,6 @@ public class SAMLBuilder {
         if (xmlObject instanceof NameID) {
           NameID nameID = (NameID) xmlObject;
           return Optional.of(nameID.getValue());
-        } else if (xmlObject instanceof EncryptedID) {
-          EncryptedID encrypted = (EncryptedID) xmlObject;
-          Decrypter decrypter = context.getLocalDecrypter();
-          try {
-            SAMLObject samlObject = decrypter.decrypt(encrypted);
-            if (samlObject instanceof NameID) {
-              NameID nameID = (NameID) samlObject;
-              return Optional.of(nameID.getValue());
-            }
-          } catch (DecryptionException e) {
-            throw new RuntimeException(e);
-          }
         }
       }
     }

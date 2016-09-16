@@ -3,7 +3,6 @@ package eidas.saml;
 import org.opensaml.common.binding.SAMLMessageContext;
 import org.opensaml.saml2.core.AuthnRequest;
 import org.springframework.core.env.Environment;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.saml.util.SAMLUtil;
@@ -38,21 +37,8 @@ public class IdentityProviderAuthnFilter extends OncePerRequestFilter implements
 
   @Override
   public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-    // FIXME is this needed?
-    if (authenticationNotRequired()) {
-      sendAuthResponse(response);
-      return;
-    }
-
     if (!isSAML(request)) {
-      if (!request.getRequestURI().contains("test")) {
-        throw new IllegalArgumentException("No SAMLRequest or SAMLResponse query path parameter, invalid SAML 2 HTTP Redirect message");
-      }
-
-      //sendAuthnRequest to EB
-      SecurityContextHolder.getContext().setAuthentication(new SAMLAuthentication(new NoProxySAMLPrincipal()));
-      request.getRequestDispatcher("/saml/login").forward(request, response);
-      return;
+      throw new IllegalArgumentException("No SAMLRequest or SAMLResponse query path parameter, invalid SAML 2 HTTP Redirect message");
     }
 
     //The SAMLRequest parameters are urlEncoded in local modus and the extraction expects unencoded parameters
@@ -101,20 +87,9 @@ public class IdentityProviderAuthnFilter extends OncePerRequestFilter implements
     }
   }
 
-  private void sendAuthResponse(HttpServletResponse response) {
-    SAMLPrincipal principal = (SAMLPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    samlMessageHandler.sendAuthnResponse(principal, response);
-  }
-
-  private boolean authenticationNotRequired() {
-    Authentication existingAuth = SecurityContextHolder.getContext().getAuthentication();
-    return existingAuth != null && existingAuth.getPrincipal() instanceof SAMLPrincipal && existingAuth.isAuthenticated();
-  }
-
   private boolean isSAML(HttpServletRequest request) {
     return StringUtils.hasText(request.getParameter("SAMLResponse"))
       || StringUtils.hasText(request.getParameter("SAMLRequest"));
 
   }
-
 }

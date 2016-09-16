@@ -139,7 +139,9 @@ public class STORKAuthnService {
      */
     private STORKAuthnRequest signSTORKAuthnRequest(STORKAuthnRequest storkAuthnRequest) throws SecurityException, SAMLException {
         Credential credential = keyManager.resolveSingle(new CriteriaSet(new EntityIDCriteria(issuer)));
-        ;
+        if (credential == null) {
+          throw new IllegalStateException("credential for " + issuer + " not found");
+        }
         SAMLUtil.signSAMLObject(storkAuthnRequest, credential);
         return storkAuthnRequest;
     }
