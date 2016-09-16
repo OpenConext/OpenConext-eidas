@@ -11,9 +11,8 @@ server:
     cookie:
       secure: true
 
-# Identity Provider. The metadata_url can (and should) be a https resource
+# Identity Provider.
 idp:
-  metadata_url: {{ eidas_proxy.idp_metadata_feed }}
   verify_host_name: true
 
 # SAML MetaData feed with all allowed SPs. Can (and should) be a https resource

@@ -92,9 +92,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   @Autowired
   private Environment environment;
 
-  @Value("${idp.metadata_url}")
-  private String identityProviderMetadataUrl;
-
   @Value("${proxy.base_url}")
   private String proxyBaseUrl;
 
@@ -229,23 +226,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   }
 
   @Bean
-  public MetadataProvider identityProvider() throws MetadataProviderException {
-    Resource resource = defaultResourceLoader.getResource(identityProviderMetadataUrl);
-    ResourceMetadataProvider resourceMetadataProvider = new ResourceMetadataProvider(resource);
-    resourceMetadataProvider.setParserPool(parserPool());
-    ExtendedMetadataDelegate extendedMetadataDelegate = new ExtendedMetadataDelegate(resourceMetadataProvider, extendedMetadata());
-    extendedMetadataDelegate.setMetadataTrustCheck(true);
-    extendedMetadataDelegate.setMetadataRequireSignature(true);
-    return extendedMetadataDelegate;
-  }
-
-  @Bean
   @Qualifier("metadata")
   public CachingMetadataManager metadata() throws MetadataProviderException {
-    List<MetadataProvider> providers = new ArrayList<>();
-    providers.add(identityProvider());
-
-    CachingMetadataManager metadataManager = new CachingMetadataManager(providers);
+    CachingMetadataManager metadataManager = new CachingMetadataManager(new ArrayList<>());
     metadataManager.setRefreshCheckInterval(1000 * 60 * 60);
     return metadataManager;
   }
