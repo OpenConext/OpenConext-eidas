@@ -12,12 +12,14 @@
 
 - name: put the certificate for ssl
   copy: content="{{ eidas_ssl_cert }}" dest=/etc/httpd/keys/{{ eidas_vhost_name }}.pem mode=0400 owner=root
+  notify: restart httpd
 
 - name: copy the non-hanging systemd file
   copy: src=httpd.service dest=/usr/lib/systemd/system mode=0644 owner=root
 
 - name: Put the private key for ssl
   copy: content="{{ eidas_ssl_key | vault(vault_keydir) }}" dest=/etc/httpd/keys/{{ eidas_vhost_name }}.key owner=root group=root mode=0400
+  notify: restart httpd
 
 - name: copy default config files
   copy: src={{ item }} dest=/etc/httpd/conf.d/{{ item }}
