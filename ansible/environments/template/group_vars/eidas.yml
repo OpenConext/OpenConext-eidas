@@ -1,6 +1,7 @@
 ---
 eidas_version: 1.0.0-SNAPSHOT
 eidas_dir: /opt/eidas
+# Hostname of this proxy. Note: Update other URLs below when changing the vhost name
 eidas_vhost_name: eidas.example.com
 smtp_server: localhost
 error_mail_to: logs@example.org
@@ -12,16 +13,21 @@ eidas_ssl_cert: "{{ lookup('file', inventory_dir+'/ssl_cert/eidas.crt') }}"
 eidas_ssl_key: "{{ lookup('file', inventory_dir+'/ssl_cert/eidas.key') }}"
 
 eidas_proxy:
-  entity_id: eidas_entity
+  # Entity ID of this proxy
+  entity_id: https://eidas.example.com/idp/metadata
+  # Certificate and private key for SAML signing
+  # Format: X.509 PEM certificate, PEM private key
   private_key: "{{ lookup('file', inventory_dir+'/saml_cert/eidas.key') }}"
   certificate: "{{ lookup('file', inventory_dir+'/saml_cert/eidas.crt') }}"
   key_name: eidas_key
-  sp_metadata_feed: https://example.com/authentication/sp/metadata
+  # URL of the SAML SP metadata of the SP that can use this proxy for authentication
+  sp_metadata_feed: https://sp.example.com/authentication/sp/metadata
+  # URL of the SAML IdP metadata of PEPS that this proxy uses
   idp_metadata_feed: https://tst-peps.minez.nl/PEPS/ServiceProvider/metadata
   service_name: eIDAS TEST
   service_id: urn:eidas:peps.minez.nl:0001
-  organization_name: Organization
-  organization_display_name: Organization
+  organization_name: Organization Name
+  organization_display_name: Organization Display Name
   organization_url: http://www.example.com
   technical_contact_givenname: John Doe
   technical_contact_surname: Support
@@ -31,13 +37,13 @@ eidas_proxy:
 eidas_sp:
   destination: https://tst-peps.minez.nl/PEPS/ServiceProvider
   certificate: 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
-  acs_url: https://tst-peps.minez.nl/PEPS/ServiceProvider/sp-demo/response
-  provider_name: NL-DEMO-SP
-  issuer: eidas_entity
+  acs_url: https://eidas.example.com/saml/acs
+  provider_name: EXAMPLE-SP
+  issuer: https://eidas.example.com/idp/metadata
   qaa_level: 3
-  sector: NL-DEMO-SP
-  institution: N-DEMO-SP
-  application: NL-DEMO-SP
+  sector: Education
+  institution: EXAMPLE
+  application: EXAMPLE-eIDAS-proxy
   country: NL
   requested_attributes:
     names: eIdentifier,givenName,surname,inheritedFamilyName,dateOfBirth,gender,textResidenceAddress
