@@ -7,5 +7,5 @@ vault_keydir: "{{ inventory_dir }}/eidas-ansible-keystore"
 # Format: IANA tz zone name (e.g. "Europe/Amsterdam")
 timezone: Europe/Amsterdam
 
-maven_repo: https://build.surfconext.nl/repository/public/releases
-maven_snapshot_repo: https://build.surfconext.nl/repository/public/snapshots
+maven_repo: https://build.openconext.org/repository/public/releases
+maven_snapshot_repo: https://build.openconext.org/repository/public/snapshots
